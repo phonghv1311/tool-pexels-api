@@ -1,0 +1,55 @@
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #111827;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #2d3b58;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #05a081;
+}
+
+/* Card Hover Animation */
+.video-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.video-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(5, 160, 129, 0.4);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px -3px rgba(5, 160, 129, 0.2);
+}
+
+/* Active Category Chip */
+.chip.active {
+  background-color: #05a081 !important;
+  color: #ffffff !important;
+  border-color: #34d399 !important;
+  box-shadow: 0 0 12px rgba(5, 160, 129, 0.4);
+}
+
+.quick-dur.active-dur {
+  background-color: rgba(5, 160, 129, 0.2) !important;
+  color: #34d399 !important;
+  border-color: rgba(5, 160, 129, 0.4) !important;
+}
+
+/* Log drawer */
+#logsDrawer::-webkit-scrollbar {
+  width: 4px;
+}
+#logsDrawer::-webkit-scrollbar-thumb {
+  background: #2d3b58;
+}
+
+/* Toast transitions */
+.toast-visible {
+  transform: translateY(0) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}

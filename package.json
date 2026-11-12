@@ -1,0 +1,19 @@
+{
+  "name": "tool-pexels-api",
+  "version": "1.0.0",
+  "description": "Web tool to search, shuffle, multi-thread download and merge Pexels videos by category and target duration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0"
+  }
+}
