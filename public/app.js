@@ -334,6 +334,13 @@ async function verifyAndSaveApiKey(key) {
     return;
   }
 
+  // Detect if user pasted remember_user_token or browser cookie instead of API key
+  if (key.includes('eyJfcmFpbHMi') || key.includes('remember_user_token') || (key.length > 80 && key.includes('--'))) {
+    showToast('Đây là Cookie đăng nhập (remember_user_token), không phải API Key!', true);
+    alert('⚠️ LƯU Ý QUAN TRỌNG:\n\nChuỗi bạn vừa nhập là Cookie phiên đăng nhập của trình duyệt (remember_user_token).\n\nPexels API chỉ chấp nhận API Key chính thức (dạng 56 ký tự chữ và số).\n\n👉 Vì bạn ĐÃ ĐĂNG NHẬP SẴN trên trình duyệt, bạn chỉ cần bấm vào link sau:\nhttps://www.pexels.com/api/documentation/\n\nỞ đầu trang sẽ hiện ngay dòng "Your API Key" hoặc ô "Authorization: YOUR_KEY". Hãy sao chép chuỗi 56 ký tự đó và dán vào đây!');
+    return;
+  }
+
   verifyApiKeyBtn.disabled = true;
   verifyApiKeyBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i> <span>Đang thử...</span>`;
 
