@@ -71,19 +71,14 @@ const statCompletedCount = document.getElementById('statCompletedCount');
 const statSpeed = document.getElementById('statSpeed');
 const statDownloadedBytes = document.getElementById('statDownloadedBytes');
 const statDuration = document.getElementById('statDuration');
-const statMergeStatus = document.getElementById('statMergeStatus');
 const overallProgressBar = document.getElementById('overallProgressBar');
 const progressBarLabel = document.getElementById('progressBarLabel');
 const progressBarValue = document.getElementById('progressBarValue');
-const ffmpegMergeProgressBox = document.getElementById('ffmpegMergeProgressBox');
-const ffmpegProgressBar = document.getElementById('ffmpegProgressBar');
-const ffmpegPercentText = document.getElementById('ffmpegPercentText');
-const ffmpegStepText = document.getElementById('ffmpegStepText');
-const mergedSuccessBox = document.getElementById('mergedSuccessBox');
-const mergedFileSizeBadge = document.getElementById('mergedFileSizeBadge');
-const mergedFilenameText = document.getElementById('mergedFilenameText');
-const btnPlayMerged = document.getElementById('btnPlayMerged');
-const btnDownloadMerged = document.getElementById('btnDownloadMerged');
+const downloadSuccessBox = document.getElementById('downloadSuccessBox');
+const downloadedTotalCountBadge = document.getElementById('downloadedTotalCountBadge');
+const downloadedDirPathText = document.getElementById('downloadedDirPathText');
+const btnOpenFolderAfterDone = document.getElementById('btnOpenFolderAfterDone');
+const quickOpenFolderBtn = document.getElementById('quickOpenFolderBtn');
 const downloadQueueList = document.getElementById('downloadQueueList');
 const queueCount = document.getElementById('queueCount');
 const toggleLogsBtn = document.getElementById('toggleLogsBtn');
@@ -130,6 +125,8 @@ function setupEventListeners() {
   // Open download folder
   openFolderBtn.addEventListener('click', () => openDownloadsFolder());
   btnOpenJobFolder.addEventListener('click', () => openDownloadsFolder());
+  if (quickOpenFolderBtn) quickOpenFolderBtn.addEventListener('click', () => openDownloadsFolder());
+  if (btnOpenFolderAfterDone) btnOpenFolderAfterDone.addEventListener('click', () => openDownloadsFolder());
 
   // Tabs switching
   tabSearch.addEventListener('click', () => switchTab('search'));
@@ -686,10 +683,7 @@ function updateSelectedSummaryBar() {
     }
   }
 
-  const willMerge = mergeCheck.checked;
-  const labelText = willMerge
-    ? `TẢI & GỘP ${count} VIDEO (${formatDuration(totalSeconds)})`
-    : `TẢI XUỐNG ${count} VIDEO (${formatDuration(totalSeconds)})`;
+  const labelText = `TẢI XUỐNG ${count} VIDEO (${formatDuration(totalSeconds)})`;
 
   let btnText = document.getElementById('btnStartBatchText');
   if (btnText) {
@@ -700,7 +694,7 @@ function updateSelectedSummaryBar() {
 }
 
 // -------------------------------------------------------------
-// START BATCH DOWNLOAD (Requirements 4, 5, 6, 7, 8)
+// START BATCH DOWNLOAD (Requirements 4, 5, 6, 8)
 // -------------------------------------------------------------
 async function startBatchDownload() {
   const selectedVideos = currentVideos.filter(v => selectedVideoIds.has(v.id));
@@ -712,10 +706,8 @@ async function startBatchDownload() {
   const query = searchInput.value.trim() || 'pexels_batch';
   const concurrency = parseInt(concurrencyRange.value, 10) || 6;
   const preferredQuality = qualitySelect.value;
-  const merge = mergeCheck.checked;
-  const trimExact = trimExactCheck.checked;
   const targetDurationSeconds = getTargetDurationSeconds();
-  const shuffle = shuffleCheck.checked;
+  const shuffle = shuffleCheck ? shuffleCheck.checked : true;
 
   // Slim down video objects to prevent 413 Payload Too Large on large batches (100-300 videos)
   const slimVideos = selectedVideos.map(v => ({
@@ -751,9 +743,9 @@ async function startBatchDownload() {
         jobName: query,
         concurrency,
         preferredQuality,
-        merge,
+        merge: false, // User requested: only download individual videos, no merge
         targetDurationSeconds,
-        trimExact,
+        trimExact: false,
         shuffle
       })
     });
@@ -783,8 +775,7 @@ function connectJobSSE(jobId) {
   }
 
   // Reset UI elements
-  ffmpegMergeProgressBox.classList.add('hidden');
-  mergedSuccessBox.classList.add('hidden');
+  if (downloadSuccessBox) downloadSuccessBox.classList.add('hidden');
   overallProgressBar.style.width = '0%';
   statProgressPercent.textContent = '0%';
   statSpeed.textContent = '0.0 MB/s';
@@ -935,27 +926,16 @@ function handleJobCompleted(job) {
   statSpeed.textContent = '0.0 MB/s';
 
   activeJobStatusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5';
-  activeJobStatusBadge.innerHTML = `<i class="fa-solid fa-check text-[10px]"></i> Đã hoàn thành`;
+  activeJobStatusBadge.innerHTML = `<i class="fa-solid fa-check text-[10px]"></i> Đã tải xong`;
 
-  if (job.mergedFile) {
-    ffmpegMergeProgressBox.classList.add('hidden');
-    mergedSuccessBox.classList.remove('hidden');
-    mergedFileSizeBadge.textContent = `${job.mergedFile.sizeMb} MB`;
-    mergedFilenameText.textContent = job.mergedFile.filename;
-
-    const fileUrl = `/api/download/file/${job.id}/${job.mergedFile.filename}`;
-    btnDownloadMerged.href = fileUrl;
-    btnDownloadMerged.download = job.mergedFile.filename;
-
-    btnPlayMerged.onclick = () => {
-      openModal({ user: { name: 'Pexels Studio Merged' } }, fileUrl, '1080p Standardized (Merged)');
-    };
-
-    showToast('🎉 Tải và gộp video thành công!');
-  } else {
-    showToast(`Đã hoàn tất tải ${job.completedVideos} video vào thư mục!`);
+  if (downloadSuccessBox) {
+    downloadSuccessBox.classList.remove('hidden');
+    if (downloadedTotalCountBadge) downloadedTotalCountBadge.textContent = `${job.completedVideos} video`;
+    if (downloadedDirPathText) downloadedDirPathText.textContent = job.dir;
+    if (btnOpenFolderAfterDone) btnOpenFolderAfterDone.onclick = () => openDownloadsFolder(job.dir);
   }
 
+  showToast(`🎉 Đã tải hoàn tất ${job.completedVideos} video vào thư mục!`);
   loadHistory();
 }
 
@@ -994,7 +974,6 @@ async function loadHistory() {
         <div>
           <div class="font-medium text-white flex items-center gap-2">
             <i class="fa-regular fa-folder text-brand-400"></i> ${item.folderName}
-            ${item.mergedFile ? '<span class="text-[10px] px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-semibold border border-purple-500/30">Đã gộp video</span>' : ''}
           </div>
           <div class="text-[11px] text-gray-400 mt-0.5 font-mono">
             ${item.videoCount} files MP4 &bull; ${dateStr}

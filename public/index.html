@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pexels Video Pro Downloader & Merger</title>
+  <title>Pexels Video Pro Downloader</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -45,25 +45,19 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-brand-500/20">
-          <i class="fa-solid fa-film text-white text-lg"></i>
+          <i class="fa-solid fa-cloud-arrow-down text-white text-lg"></i>
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <h1 class="font-bold text-lg text-white tracking-tight">Pexels Video Studio</h1>
-            <span class="text-[11px] font-semibold uppercase tracking-wider bg-brand-500/20 text-brand-400 px-2 py-0.5 rounded-full border border-brand-500/30">Pro Multi-Thread</span>
+            <h1 class="font-bold text-lg text-white tracking-tight">Pexels Video Downloader</h1>
+            <span class="text-[11px] font-semibold uppercase tracking-wider bg-brand-500/20 text-brand-400 px-2 py-0.5 rounded-full border border-brand-500/30">Batch Multi-Thread</span>
           </div>
-          <p class="text-xs text-gray-400">Tải video siêu tốc & Gộp video tự động theo thời lượng</p>
+          <p class="text-xs text-gray-400">Tải video siêu tốc theo Danh mục & Đủ tổng thời lượng</p>
         </div>
       </div>
 
       <!-- Status badges & API Key input -->
       <div class="flex items-center flex-wrap gap-2.5">
-        <!-- FFmpeg status -->
-        <div id="ffmpegBadge" class="flex items-center space-x-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-dark-800 border border-dark-700 text-gray-400">
-          <i class="fa-solid fa-circle-notch fa-spin text-yellow-400 text-[10px]"></i>
-          <span>FFmpeg: Đang kiểm tra...</span>
-        </div>
-
         <!-- API Key modal toggle / input -->
         <div class="flex items-center space-x-1 bg-dark-800 border border-dark-700 rounded-lg p-1">
           <div class="relative flex items-center">
@@ -78,9 +72,9 @@
         </div>
 
         <!-- Open downloads folder button -->
-        <button id="openFolderBtn" title="Mở thư mục tải về trên máy" class="p-2 text-xs font-medium rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 text-gray-300 hover:text-white transition flex items-center space-x-1.5">
+        <button id="openFolderBtn" title="Thư mục tải: C:\Users\phong\Downloads\MMO\video pexels" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 text-gray-300 hover:text-white transition flex items-center space-x-1.5">
           <i class="fa-regular fa-folder-open text-brand-400"></i>
-          <span class="hidden sm:inline">Thư mục tải</span>
+          <span>Thư mục tải</span>
         </button>
       </div>
     </div>
@@ -113,7 +107,7 @@
       </button>
       <button id="tabDownloads" class="pb-3 text-sm font-semibold border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center space-x-2">
         <i class="fa-solid fa-clock-rotate-left"></i>
-        <span>2. Tiến trình tải & Lịch sử video</span>
+        <span>2. Tiến trình tải & Thư mục video</span>
         <span id="activeJobIndicator" class="hidden w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span>
       </button>
     </div>
@@ -196,14 +190,14 @@
           <div class="md:col-span-3">
             <label class="block text-xs font-medium text-gray-400 mb-1">Độ phân giải ưu tiên</label>
             <select id="qualitySelect" class="w-full bg-dark-900 border border-dark-750 rounded-xl px-3 py-2 text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
-              <option value="hd">Full HD 1080p (Khuyên dùng - Nhanh & Rõ)</option>
+              <option value="hd">Full HD 1080p (Khuyên dùng - Nét & Nhanh)</option>
               <option value="4k">4K Ultra HD (Nếu có)</option>
               <option value="sd">SD 720p/480p (Nhẹ & Siêu nhanh)</option>
             </select>
           </div>
         </div>
 
-        <!-- Section: TARGET DURATION & CONCATENATION OPTIONS -->
+        <!-- Section: TARGET DURATION & CONCURRENCY -->
         <div class="border-t border-dark-750/70 pt-4 mt-2">
           <div class="bg-dark-800/80 rounded-xl p-4 border border-dark-700/70 space-y-4">
             
@@ -248,44 +242,22 @@
               </div>
             </div>
 
-            <!-- Checkbox features (Shuffle, Merge, Trim, Concurrency) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+            <!-- Options: Shuffle & Concurrency & Destination -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
               
               <!-- Shuffle toggle -->
-              <label class="flex items-center space-x-2.5 p-2.5 rounded-lg bg-dark-900 border border-dark-750 cursor-pointer hover:border-dark-600 transition">
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl bg-dark-900 border border-dark-750 cursor-pointer hover:border-dark-600 transition">
                 <input type="checkbox" id="shuffleCheck" checked class="w-4 h-4 rounded text-brand-500 focus:ring-brand-500 bg-dark-800 border-dark-700">
                 <div class="text-xs">
                   <span class="font-medium text-white flex items-center gap-1.5">
                     <i class="fa-solid fa-shuffle text-emerald-400"></i> Xáo trộn ngẫu nhiên
                   </span>
-                  <p class="text-[11px] text-gray-400">Không tải theo thứ tự cố định</p>
+                  <p class="text-[11px] text-gray-400">Trộn lẫn clip từ các trang khác nhau</p>
                 </div>
               </label>
 
-              <!-- Merge toggle -->
-              <label class="flex items-center space-x-2.5 p-2.5 rounded-lg bg-dark-900 border border-dark-750 cursor-pointer hover:border-dark-600 transition">
-                <input type="checkbox" id="mergeCheck" checked class="w-4 h-4 rounded text-brand-500 focus:ring-brand-500 bg-dark-800 border-dark-700">
-                <div class="text-xs">
-                  <span class="font-medium text-white flex items-center gap-1.5">
-                    <i class="fa-solid fa-object-group text-blue-400"></i> Tự động gộp 1 video
-                  </span>
-                  <p class="text-[11px] text-gray-400">Ghép nối FFmpeg thành 1 file MP4</p>
-                </div>
-              </label>
-
-              <!-- Trim exact toggle -->
-              <label class="flex items-center space-x-2.5 p-2.5 rounded-lg bg-dark-900 border border-dark-750 cursor-pointer hover:border-dark-600 transition">
-                <input type="checkbox" id="trimExactCheck" checked class="w-4 h-4 rounded text-brand-500 focus:ring-brand-500 bg-dark-800 border-dark-700">
-                <div class="text-xs">
-                  <span class="font-medium text-white flex items-center gap-1.5">
-                    <i class="fa-solid fa-scissors text-amber-400"></i> Cắt chuẩn thời lượng
-                  </span>
-                  <p class="text-[11px] text-gray-400">Cắt đúng thời gian, không dư thừa</p>
-                </div>
-              </label>
-
-              <!-- Concurrency slider/select -->
-              <div class="p-2.5 rounded-lg bg-dark-900 border border-dark-750">
+              <!-- Concurrency slider -->
+              <div class="p-3 rounded-xl bg-dark-900 border border-dark-750">
                 <div class="flex items-center justify-between text-xs mb-1">
                   <span class="font-medium text-white flex items-center gap-1">
                     <i class="fa-solid fa-bolt text-yellow-400"></i> Luồng tải song song:
@@ -294,6 +266,21 @@
                 </div>
                 <input type="range" id="concurrencyRange" min="2" max="12" value="6" step="1" 
                   class="w-full h-1.5 bg-dark-750 rounded-lg appearance-none cursor-pointer accent-brand-500">
+              </div>
+
+              <!-- Destination folder info -->
+              <div class="p-3 rounded-xl bg-dark-900 border border-dark-750 flex items-center justify-between text-xs">
+                <div>
+                  <div class="font-medium text-white flex items-center gap-1.5">
+                    <i class="fa-solid fa-folder text-brand-400"></i> Lưu vào thư mục:
+                  </div>
+                  <div class="text-[11px] text-gray-400 font-mono truncate max-w-[200px]" title="C:\Users\phong\Downloads\MMO\video pexels">
+                    MMO\video pexels
+                  </div>
+                </div>
+                <button type="button" id="quickOpenFolderBtn" class="px-2.5 py-1 text-[11px] rounded bg-dark-800 hover:bg-dark-750 text-brand-400 hover:text-brand-300 border border-dark-700">
+                  Mở
+                </button>
               </div>
 
             </div>
@@ -355,7 +342,7 @@
           <!-- Start download button -->
           <button id="btnStartBatchDownload" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-500 hover:from-brand-500 hover:to-emerald-400 text-white font-bold text-xs shadow-lg shadow-brand-500/30 transition flex items-center space-x-2">
             <i class="fa-solid fa-cloud-arrow-down text-sm"></i>
-            <span id="btnStartBatchText">BẮT ĐẦU TẢI & GỘP VIDEO</span>
+            <span id="btnStartBatchText">BẮT ĐẦU TẢI VIDEO</span>
           </button>
         </div>
       </div>
@@ -416,7 +403,7 @@
               </span>
               <h2 id="activeJobTitle" class="text-base font-bold text-white">Batch: trending_1234</h2>
             </div>
-            <p id="activeJobPath" class="text-xs text-gray-400 mt-1 font-mono">Thư mục: C:\...</p>
+            <p id="activeJobPath" class="text-xs text-gray-400 mt-1 font-mono">Thư mục: C:\Users\phong\Downloads\MMO\video pexels\...</p>
           </div>
 
           <div class="flex items-center space-x-2">
@@ -449,9 +436,9 @@
             <div class="text-[11px] text-gray-500 mt-0.5">Real-time stream</div>
           </div>
           <div class="bg-dark-900 border border-dark-750 rounded-xl p-3">
-            <div class="text-[11px] text-gray-400 uppercase font-semibold">Thời lượng gộp</div>
+            <div class="text-[11px] text-gray-400 uppercase font-semibold">Tổng thời lượng</div>
             <div id="statDuration" class="text-xl font-black text-purple-400 mt-0.5">00:00:00</div>
-            <div id="statMergeStatus" class="text-[11px] text-gray-500 mt-0.5">Gộp 1 video: BẬT</div>
+            <div id="statVideoCountInfo" class="text-[11px] text-gray-500 mt-0.5">Lưu từng file MP4 riêng</div>
           </div>
         </div>
 
@@ -466,45 +453,26 @@
           </div>
         </div>
 
-        <!-- FFmpeg Merge Progress Bar (visible during merging) -->
-        <div id="ffmpegMergeProgressBox" class="hidden bg-dark-900 border border-purple-500/30 rounded-xl p-4 space-y-2">
-          <div class="flex items-center justify-between text-xs">
-            <span class="font-semibold text-purple-300 flex items-center gap-2">
-              <i class="fa-solid fa-spinner fa-spin text-purple-400"></i>
-              <span id="ffmpegStepText">Đang chuẩn hóa & ghép nối bằng FFmpeg...</span>
-            </span>
-            <span id="ffmpegPercentText" class="font-bold text-purple-400">0%</span>
-          </div>
-          <div class="w-full h-2.5 bg-dark-800 rounded-full overflow-hidden">
-            <div id="ffmpegProgressBar" class="h-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-200" style="width: 0%"></div>
-          </div>
-          <p class="text-[11px] text-gray-400">Quá trình này tự động chuẩn hóa kích thước, tỷ lệ khung hình và ghép siêu tốc bằng FFmpeg.</p>
-        </div>
-
-        <!-- Merged File Success Card (visible when merged) -->
-        <div id="mergedSuccessBox" class="hidden bg-gradient-to-r from-emerald-950/40 to-dark-900 border border-brand-500/50 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+        <!-- Download Success Card (visible when all downloaded) -->
+        <div id="downloadSuccessBox" class="hidden bg-gradient-to-r from-emerald-950/40 to-dark-900 border border-brand-500/50 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-lg">
           <div class="flex items-center space-x-3">
             <div class="w-12 h-12 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center text-xl">
               <i class="fa-solid fa-circle-check"></i>
             </div>
             <div>
               <h4 class="text-sm font-bold text-white flex items-center gap-2">
-                Video đã gộp thành công!
-                <span id="mergedFileSizeBadge" class="text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400">0 MB</span>
+                🎉 Đã hoàn tất tải toàn bộ video về máy!
+                <span id="downloadedTotalCountBadge" class="text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 font-semibold">0 video</span>
               </h4>
-              <p id="mergedFilenameText" class="text-xs text-gray-300 font-mono mt-0.5">MERGED_video.mp4</p>
+              <p id="downloadedDirPathText" class="text-xs text-gray-300 font-mono mt-0.5">C:\Users\phong\Downloads\MMO\video pexels</p>
             </div>
           </div>
 
           <div class="flex items-center space-x-2">
-            <button id="btnPlayMerged" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition flex items-center space-x-1.5 shadow-md">
-              <i class="fa-solid fa-play"></i>
-              <span>Xem ngay</span>
+            <button id="btnOpenFolderAfterDone" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition flex items-center space-x-1.5 shadow-md">
+              <i class="fa-regular fa-folder-open"></i>
+              <span>Mở thư mục trên máy</span>
             </button>
-            <a id="btnDownloadMerged" href="#" download class="px-4 py-2 rounded-xl bg-dark-750 hover:bg-dark-700 text-gray-200 font-semibold text-xs border border-dark-700 transition flex items-center space-x-1.5">
-              <i class="fa-solid fa-download"></i>
-              <span>Tải file về máy</span>
-            </a>
           </div>
         </div>
 
@@ -541,7 +509,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
             <i class="fa-solid fa-folder-tree text-brand-400"></i>
-            <h3 class="text-sm font-bold text-white">Lịch sử các đợt tải trước đây</h3>
+            <h3 class="text-sm font-bold text-white">Lịch sử các đợt tải trong thư mục MMO</h3>
           </div>
           <button id="btnRefreshHistory" class="text-xs text-brand-400 hover:text-brand-300 flex items-center gap-1">
             <i class="fa-solid fa-rotate-right"></i> Làm mới
@@ -588,7 +556,7 @@
   </div>
 
   <footer class="border-t border-dark-750 bg-dark-900 py-4 text-center text-xs text-gray-500">
-    Pexels Video Tool &copy; 2026 &bull; Multi-threaded Downloader & FFmpeg Concatenator
+    Pexels Video Tool &copy; 2026 &bull; Multi-threaded Direct Batch Downloader
   </footer>
 
   <script src="app.js"></script>

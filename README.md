@@ -1,6 +1,6 @@
-# 🎬 Pexels Video Studio - Batch Downloader & Merger
+# 🎬 Pexels Video Studio - Batch Downloader
 
-Công cụ Web chuyên nghiệp để tìm kiếm, gom video theo danh mục (Category), xáo trộn ngẫu nhiên (Shuffle), tự động gom đủ tổng thời lượng (ví dụ: 2 tiếng), tải siêu tốc đa luồng (Multi-threading), và gộp tất cả thành 1 video MP4 duy nhất bằng FFmpeg.
+Công cụ Web chuyên nghiệp để tìm kiếm, gom video theo danh mục (Category), xáo trộn ngẫu nhiên (Shuffle), tự động gom đủ tổng thời lượng (ví dụ: 2 tiếng) và tải trực tiếp siêu tốc đa luồng (Multi-threading) về thư mục trên máy tính.
 
 ---
 
@@ -20,17 +20,13 @@ Công cụ Web chuyên nghiệp để tìm kiếm, gom video theo danh mục (Ca
    - Thuật toán Fisher-Yates xáo trộn các clip từ nhiều trang và tác giả khác nhau, tránh thứ tự rập khuôn.
    - Nút **Đổi thứ tự (Shuffle)** trên giao diện cho phép đảo lại thứ tự bất kỳ lúc nào.
 
-4. **Gộp thành 1 Video duy nhất (Video Merger with FFmpeg)**:
-   - Tự động chuẩn hóa kích thước, tỷ lệ khung hình và FPS (1080p @ 30fps).
-   - Ghép nối siêu tốc các clip thành 1 file MP4 hoàn chỉnh.
-   - Tùy chọn **Cắt chuẩn thời lượng (Trim exact)**: Tự động cắt đúng số giây mục tiêu (ví dụ chuẩn 2 tiếng 00 phút 00 giây không bị dư).
-
-5. **Tải siêu tốc đa luồng (Multi-Threaded Parallel Downloads)**:
+4. **Tải siêu tốc đa luồng (Multi-Threaded Parallel Downloads)**:
    - Tùy chỉnh số luồng tải cùng lúc từ 2 đến 12 luồng song song.
+   - Lưu trực tiếp từng file MP4 riêng lẻ vào thư mục máy tính (`C:\Users\phong\Downloads\MMO\video pexels`).
    - Theo dõi tiến độ thời gian thực (Real-time speed MB/s, dung lượng đã tải, % tiến độ từng file và tổng thể qua Server-Sent Events).
 
-6. **Giao diện hiện đại & Tiện ích**:
-   - Xem trước video (Video Player Modal) trước khi tải hoặc xem video đã gộp ngay trên trình duyệt.
+5. **Giao diện hiện đại & Tiện ích**:
+   - Xem trước video (Video Player Modal) trước khi tải ngay trên trình duyệt.
    - Nút **Mở thư mục tải** trực tiếp trong Windows File Explorer.
    - Lịch sử các đợt tải trước đó.
 

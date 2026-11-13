@@ -709,6 +709,7 @@ async function runDownloadJob(job, concurrency = 5) {
   }
 
   addJobLog(job, `Đã hoàn tất quá trình tải: ${job.completedVideos}/${job.totalVideos} videos tải thành công.`);
+  addJobLog(job, `📁 Toàn bộ file video MP4 đã được lưu an toàn tại: ${job.dir}`, 'success');
 
   // If user requested Video Merge and FFmpeg is available
   if (job.merge && job.completedVideos > 0) {
