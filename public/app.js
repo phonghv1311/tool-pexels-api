@@ -113,6 +113,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   // Event Listeners
   setupEventListeners();
+
+  // Auto-fetch default category (trending) on initial startup if API key is present
+  if (apiKey) {
+    fetchDurationBatch();
+  }
 });
 
 function setupEventListeners() {
@@ -135,7 +140,7 @@ function setupEventListeners() {
     loadHistory();
   });
 
-  // Category Chips click
+  // Category Chips click - Auto-trigger video fetch immediately!
   categoryChips.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       categoryChips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -143,22 +148,51 @@ function setupEventListeners() {
       const cat = chip.dataset.cat;
       searchInput.value = cat;
       clearSearchBtn.classList.remove('hidden');
+
+      // Auto-trigger fetch videos for selected category!
+      fetchDurationBatch();
     });
   });
 
-  // Search input events
+  // Search input events (Enter key to search)
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      fetchDurationBatch();
+    }
+  });
+
   searchInput.addEventListener('input', () => {
-    if (searchInput.value.trim()) {
+    const val = searchInput.value.trim().toLowerCase();
+    if (val) {
       clearSearchBtn.classList.remove('hidden');
     } else {
       clearSearchBtn.classList.add('hidden');
     }
+
+    // Sync active chip
+    categoryChips.querySelectorAll('.chip').forEach(chip => {
+      if (chip.dataset.cat.toLowerCase() === val) {
+        chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
+      }
+    });
   });
 
   clearSearchBtn.addEventListener('click', () => {
     searchInput.value = '';
     clearSearchBtn.classList.add('hidden');
     searchInput.focus();
+    categoryChips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  });
+
+  // Auto re-fetch when orientation or quality filters change
+  orientationSelect.addEventListener('change', () => {
+    if (currentVideos.length > 0) fetchDurationBatch();
+  });
+  qualitySelect.addEventListener('change', () => {
+    if (currentVideos.length > 0) fetchDurationBatch();
   });
 
   // Duration input events
