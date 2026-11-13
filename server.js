@@ -15,9 +15,9 @@ app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Downloads directory - Priority: .env or C:\Users\phong\Downloads\MMO\video pexels
-const defaultCustomDir = 'C:\\Users\\phong\\Downloads\\MMO\\video pexels';
-const DOWNLOADS_DIR = process.env.DOWNLOADS_DIR || (fs.existsSync(defaultCustomDir) ? defaultCustomDir : path.join(__dirname, 'downloads'));
+// Downloads directory - Priority: .env or E:\MMO\download-video-pexcels
+const defaultCustomDir = 'E:\\MMO\\download-video-pexcels';
+const DOWNLOADS_DIR = process.env.DOWNLOADS_DIR || (fs.existsSync('E:\\') ? defaultCustomDir : path.join(__dirname, 'downloads'));
 if (!fs.existsSync(DOWNLOADS_DIR)) {
   fs.mkdirSync(DOWNLOADS_DIR, { recursive: true });
 }
