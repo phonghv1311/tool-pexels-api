@@ -322,6 +322,18 @@ async function checkServerStatus() {
       ffmpegBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400 text-[10px]"></i> <span class="text-amber-300">FFmpeg: Chưa có (Chỉ tải video)</span>`;
       ffmpegBadge.className = "flex items-center space-x-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400";
     }
+
+    if (data.downloadsDir) {
+      openFolderBtn.title = `Thư mục tải: ${data.downloadsDir}`;
+    }
+
+    // Auto-fill API key from server .env if not yet in localStorage
+    if (!apiKey && data.defaultApiKey) {
+      apiKey = data.defaultApiKey;
+      apiKeyInput.value = apiKey;
+      localStorage.setItem('pexels_api_key', apiKey);
+      apiKeyBanner.classList.add('hidden');
+    }
   } catch (err) {
     ffmpegBadge.innerHTML = `<i class="fa-solid fa-xmark text-red-400 text-[10px]"></i> <span class="text-red-400">Server offline</span>`;
   }
