@@ -329,7 +329,7 @@ app.post('/api/download/start', async (req, res) => {
   const {
     videos = [],
     jobName = 'pexels_batch',
-    concurrency = 5,
+    concurrency = 20,
     preferredQuality = 'hd',
     merge = false,
     targetDurationSeconds = 0,
@@ -400,8 +400,8 @@ app.post('/api/download/start', async (req, res) => {
     addJobLog(job, `Chế độ tự động gộp (Merge) được bật: Sẽ tạo 1 video hoàn chỉnh sau khi tải xong.`);
   }
 
-  // Start background process
-  runDownloadJob(job, Math.max(1, Math.min(concurrency || 5, 15)));
+  // Start background process (Auto 20 threads or max 32)
+  runDownloadJob(job, Math.max(1, Math.min(concurrency || 20, 32)));
 
   res.json({
     jobId,
@@ -660,8 +660,8 @@ function updateOverallJobProgress(job) {
   job.progressPercent = Math.min(100, Math.round(percent * 10) / 10);
 }
 
-// Job Runner with Concurrency
-async function runDownloadJob(job, concurrency = 5) {
+// Job Runner with Concurrency (default 20 parallel threads)
+async function runDownloadJob(job, concurrency = 20) {
   const queue = [...job.videos];
   const activeWorkers = new Set();
 

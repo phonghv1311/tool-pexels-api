@@ -20,6 +20,7 @@ const searchView = document.getElementById('searchView');
 const downloadsView = document.getElementById('downloadsView');
 const activeJobIndicator = document.getElementById('activeJobIndicator');
 
+const categorySelect = document.getElementById('categorySelect');
 const categoryChips = document.getElementById('categoryChips');
 const searchInput = document.getElementById('searchInput');
 const clearSearchBtn = document.getElementById('clearSearchBtn');
@@ -140,6 +141,37 @@ function setupEventListeners() {
     loadHistory();
   });
 
+  // Concurrency slider (Default 20 parallel threads)
+  if (concurrencyRange) {
+    concurrencyRange.value = 20;
+    if (concurrencyValue) concurrencyValue.textContent = '20 luồng (Tối đa)';
+    concurrencyRange.addEventListener('input', () => {
+      const val = concurrencyRange.value;
+      if (concurrencyValue) concurrencyValue.textContent = `${val} luồng ${val >= 20 ? '(Tối đa)' : ''}`;
+    });
+  }
+
+  // Category Dropdown change - Auto-trigger video fetch immediately!
+  if (categorySelect) {
+    categorySelect.addEventListener('change', () => {
+      const cat = categorySelect.value;
+      searchInput.value = cat;
+      if (clearSearchBtn) clearSearchBtn.classList.remove('hidden');
+
+      // Sync active chip
+      categoryChips.querySelectorAll('.chip').forEach(chip => {
+        if (chip.dataset.cat === cat) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
+
+      // Auto-trigger fetch videos for selected category!
+      fetchDurationBatch();
+    });
+  }
+
   // Category Chips click - Auto-trigger video fetch immediately!
   categoryChips.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
@@ -147,7 +179,8 @@ function setupEventListeners() {
       chip.classList.add('active');
       const cat = chip.dataset.cat;
       searchInput.value = cat;
-      clearSearchBtn.classList.remove('hidden');
+      if (categorySelect) categorySelect.value = cat;
+      if (clearSearchBtn) clearSearchBtn.classList.remove('hidden');
 
       // Auto-trigger fetch videos for selected category!
       fetchDurationBatch();
@@ -216,11 +249,6 @@ function setupEventListeners() {
       updateTargetDurationSummary();
       updateSelectedSummaryBar();
     });
-  });
-
-  // Concurrency slider
-  concurrencyRange.addEventListener('input', () => {
-    concurrencyValue.textContent = `${concurrencyRange.value} luồng`;
   });
 
   // Duration Batch Fetch Trigger
@@ -341,32 +369,36 @@ function showToast(message, isError = false) {
   }, 3500);
 }
 
-// Check server and FFmpeg status
+// Check server status
 async function checkServerStatus() {
   try {
     const res = await fetch('/api/status');
     const data = await res.json();
-    if (data.ffmpegInstalled) {
-      ffmpegBadge.innerHTML = `<i class="fa-solid fa-check text-emerald-400 text-[10px]"></i> <span class="text-emerald-300 font-medium">FFmpeg: Sẵn sàng (Ghép video OK)</span>`;
-      ffmpegBadge.className = "flex items-center space-x-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
-    } else {
-      ffmpegBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400 text-[10px]"></i> <span class="text-amber-300">FFmpeg: Chưa có (Chỉ tải video)</span>`;
-      ffmpegBadge.className = "flex items-center space-x-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400";
+    if (ffmpegBadge) {
+      if (data.ffmpegInstalled) {
+        ffmpegBadge.innerHTML = `<i class="fa-solid fa-check text-emerald-400 text-[10px]"></i> <span class="text-emerald-300 font-medium">Sẵn sàng</span>`;
+        ffmpegBadge.className = "flex items-center space-x-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
+      } else {
+        ffmpegBadge.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i> <span class="text-emerald-300 font-medium">Server Online</span>`;
+        ffmpegBadge.className = "flex items-center space-x-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
+      }
     }
 
-    if (data.downloadsDir) {
+    if (data.downloadsDir && openFolderBtn) {
       openFolderBtn.title = `Thư mục tải: ${data.downloadsDir}`;
     }
 
     // Auto-fill API key from server .env if not yet in localStorage
     if (!apiKey && data.defaultApiKey) {
       apiKey = data.defaultApiKey;
-      apiKeyInput.value = apiKey;
+      if (apiKeyInput) apiKeyInput.value = apiKey;
       localStorage.setItem('pexels_api_key', apiKey);
-      apiKeyBanner.classList.add('hidden');
+      if (apiKeyBanner) apiKeyBanner.classList.add('hidden');
     }
   } catch (err) {
-    ffmpegBadge.innerHTML = `<i class="fa-solid fa-xmark text-red-400 text-[10px]"></i> <span class="text-red-400">Server offline</span>`;
+    if (ffmpegBadge) {
+      ffmpegBadge.innerHTML = `<i class="fa-solid fa-xmark text-red-400 text-[10px]"></i> <span class="text-red-400">Server offline</span>`;
+    }
   }
 }
 
@@ -738,7 +770,7 @@ async function startBatchDownload() {
   }
 
   const query = searchInput.value.trim() || 'pexels_batch';
-  const concurrency = parseInt(concurrencyRange.value, 10) || 6;
+  const concurrency = parseInt(concurrencyRange ? concurrencyRange.value : 20, 10) || 20;
   const preferredQuality = qualitySelect.value;
   const targetDurationSeconds = getTargetDurationSeconds();
   const shuffle = shuffleCheck ? shuffleCheck.checked : true;
@@ -859,15 +891,14 @@ function handleJobEvent(payload) {
   } else if (type === 'video_update') {
     updateQueueItemStatus(payload.video);
   } else if (type === 'merge_status') {
-    ffmpegMergeProgressBox.classList.remove('hidden');
-    activeJobStatusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center gap-1.5';
-    activeJobStatusBadge.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-[10px]"></i> Đang gộp video (FFmpeg)`;
-    progressBarLabel.textContent = 'Hoàn tất tải file & Đang gộp thành 1 video duy nhất...';
+    if (activeJobStatusBadge) {
+      activeJobStatusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center gap-1.5';
+      activeJobStatusBadge.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-[10px]"></i> Đang xử lý hoàn tất`;
+    }
   } else if (type === 'merge_progress') {
-    ffmpegMergeProgressBox.classList.remove('hidden');
-    ffmpegProgressBar.style.width = `${payload.percent}%`;
-    ffmpegPercentText.textContent = `${payload.percent}%`;
-    if (payload.currentStep) ffmpegStepText.textContent = payload.currentStep;
+    if (activeJobStatusBadge) {
+      activeJobStatusBadge.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-[10px]"></i> Đang xử lý: ${payload.percent}%`;
+    }
   } else if (type === 'log') {
     appendLog(payload.log);
   } else if (type === 'completed') {

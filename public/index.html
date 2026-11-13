@@ -118,11 +118,33 @@
       <!-- Configuration Card -->
       <div class="bg-dark-850 border border-dark-750 rounded-2xl p-5 shadow-xl space-y-5">
         
-        <!-- Category Preset Chips -->
+        <!-- Category Preset Chips & Dropdown -->
         <div>
-          <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2.5">
-            <i class="fa-solid fa-tags text-brand-400 mr-1.5"></i> Chọn danh mục (Category) gợi ý
-          </label>
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+            <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">
+              <i class="fa-solid fa-tags text-brand-400 mr-1.5"></i> Chọn danh mục (Category) tải xuống
+            </label>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs text-gray-400 hidden sm:inline">Menu danh mục:</span>
+              <select id="categorySelect" class="bg-dark-900 border border-brand-500/40 text-xs text-brand-400 font-semibold rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand-500 cursor-pointer">
+                <option value="trending">🔥 Thịnh hành (Popular)</option>
+                <option value="nature">🌿 Thiên nhiên & Phong cảnh (Nature)</option>
+                <option value="ocean">🌊 Biển & Thác nước (Ocean)</option>
+                <option value="city">🏙️ Đô thị & Thành phố (City)</option>
+                <option value="technology">💻 Công nghệ & Cyber (Technology)</option>
+                <option value="relaxing">🧘 Thư giãn & Lo-Fi (Relaxing)</option>
+                <option value="night sky">🌌 Ban đêm & Vũ trụ (Space)</option>
+                <option value="drone">🚁 Drone & Flycam (Drone 4K)</option>
+                <option value="animals">🐾 Động vật hoang dã (Animals)</option>
+                <option value="food">☕ Ẩm thực & Cafe (Food & Coffee)</option>
+                <option value="fitness">🏃 Thể thao & Fitness (Fitness)</option>
+                <option value="abstract">🎨 Nền & Trừu tượng (Abstract)</option>
+                <option value="cars">🚗 Xe cộ & Siêu xe (Cars & Traffic)</option>
+                <option value="rain">🌧️ Mưa & Thời tiết (Rain & Weather)</option>
+                <option value="people">🧑 Con người & Cuộc sống (People)</option>
+              </select>
+            </div>
+          </div>
           <div class="flex flex-wrap gap-2" id="categoryChips">
             <button type="button" data-cat="trending" class="chip active px-3 py-1.5 rounded-lg text-xs font-medium bg-brand-600 text-white border border-brand-500 shadow-sm transition">
               🔥 Thịnh hành (Popular)
@@ -256,15 +278,15 @@
                 </div>
               </label>
 
-              <!-- Concurrency slider -->
+              <!-- Concurrency slider (Auto 20 threads or max) -->
               <div class="p-3 rounded-xl bg-dark-900 border border-dark-750">
                 <div class="flex items-center justify-between text-xs mb-1">
                   <span class="font-medium text-white flex items-center gap-1">
                     <i class="fa-solid fa-bolt text-yellow-400"></i> Luồng tải song song:
                   </span>
-                  <span id="concurrencyValue" class="font-bold text-brand-400">6 luồng</span>
+                  <span id="concurrencyValue" class="font-bold text-brand-400">20 luồng (Tối đa)</span>
                 </div>
-                <input type="range" id="concurrencyRange" min="2" max="12" value="6" step="1" 
+                <input type="range" id="concurrencyRange" min="5" max="30" value="20" step="1" 
                   class="w-full h-1.5 bg-dark-750 rounded-lg appearance-none cursor-pointer accent-brand-500">
               </div>
 
