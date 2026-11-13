@@ -675,11 +675,15 @@ function updateSelectedSummaryBar() {
   }
 
   const willMerge = mergeCheck.checked;
-  const btnText = document.getElementById('btnStartBatchText');
-  if (willMerge) {
-    btnText.textContent = `TẢI & GỘP ${count} VIDEO (${formatDuration(totalSeconds)})`;
-  } else {
-    btnText.textContent = `TẢI XUỐNG ${count} VIDEO (${formatDuration(totalSeconds)})`;
+  const labelText = willMerge
+    ? `TẢI & GỘP ${count} VIDEO (${formatDuration(totalSeconds)})`
+    : `TẢI XUỐNG ${count} VIDEO (${formatDuration(totalSeconds)})`;
+
+  let btnText = document.getElementById('btnStartBatchText');
+  if (btnText) {
+    btnText.textContent = labelText;
+  } else if (btnStartBatchDownload) {
+    btnStartBatchDownload.innerHTML = `<i class="fa-solid fa-cloud-arrow-down text-sm"></i> <span id="btnStartBatchText">${labelText}</span>`;
   }
 }
 
@@ -701,15 +705,37 @@ async function startBatchDownload() {
   const targetDurationSeconds = getTargetDurationSeconds();
   const shuffle = shuffleCheck.checked;
 
+  // Slim down video objects to prevent 413 Payload Too Large on large batches (100-300 videos)
+  const slimVideos = selectedVideos.map(v => ({
+    id: v.id,
+    duration: v.duration,
+    width: v.width,
+    height: v.height,
+    video_file: v.video_file ? {
+      link: v.video_file.link,
+      width: v.video_file.width,
+      height: v.video_file.height,
+      quality: v.video_file.quality,
+      file_type: v.video_file.file_type
+    } : null,
+    video_files: v.all_files || v.video_files ? (v.all_files || v.video_files).map(f => ({
+      link: f.link,
+      width: f.width,
+      height: f.height,
+      quality: f.quality,
+      file_type: f.file_type
+    })) : undefined
+  }));
+
   btnStartBatchDownload.disabled = true;
-  btnStartBatchDownload.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-sm"></i> <span>Đang khởi tạo...</span>`;
+  btnStartBatchDownload.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-sm"></i> <span id="btnStartBatchText">Đang khởi tạo...</span>`;
 
   try {
     const res = await fetch('/api/download/start', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        videos: selectedVideos,
+        videos: slimVideos,
         jobName: query,
         concurrency,
         preferredQuality,
